@@ -18,7 +18,17 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".", // This must be set if you are using "paths"
+    "paths": {
+      "three/*": [
+        "./node_modules/three/build/three.module.js",
+        "./node_modules/three/src/*"
+      ],
+      "three/examples/jsm/*": [
+        "./node_modules/three/examples/jsm/*"
+      ]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

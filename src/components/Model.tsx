@@ -1,82 +1,59 @@
-// src/Model.jsx
-import {useFrame, useLoader, useThree} from '@react-three/fiber';
-
+import { useRef, useState, useEffect, useContext } from "react";
+import { useLoader, useFrame, useThree } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import {Text3D} from "@react-three/drei";
-const Model = ({ url, position, rotation, scale ,play}) => {
+import * as THREE from 'three';
+import { ModelNameContext } from "../App";
 
+type ModelProps = {
+    url: string;
+    position: [number, number, number];
+    rotation: [number, number, number];
+    scale: [number, number, number];
+    play: boolean;
+};
+
+const Model = ({ url, position, rotation, scale, play }: ModelProps) => {
+
+    const { setModelName } = useContext(ModelNameContext);
     const gltf = useLoader(GLTFLoader, url);
-    const modelRef = useRef();
-    const clickedModelRef = useRef(null);
-    const [showTextField, setShowTextField] = useState(false);
-    const [modelName, setModelName] = useState(null); // Store extracted model name
-    const raycaster = useThree(state => state.raycaster)
-    raycaster.layers.enable(1)
-    const [mixer, setMixer] = useState(null);
-    const handleClick = (event) => {
-        clickedModelRef.current = event.currentTarget; // Assign clicked model
-        console.log(url);
-        // const modelName = clickedModelRef.current.userData?.name;
+    const modelRef = useRef<THREE.Mesh>(null);
+    const clickedModelRef = useRef<THREE.Object3D | null>(null);
+    const { raycaster } = useThree();
+    raycaster.layers.enable(1);
+    const [mixer, setMixer] = useState<THREE.AnimationMixer | null>(null);
 
-        // Update state to show/hide text field and store model name
-        // setShowTextField(true);
-        // setModelName(modelName);
+    const handleClick = (event: THREE.Event) => {
+        const intersectedObject = event.target as THREE.Object3D;
+        clickedModelRef.current = intersectedObject;
+        console.log(url.split('.')[0].split('/')[1]);
+        setModelName(url.split('.')[0].split('/')[1]);
     };
-
 
     useEffect(() => {
         if (gltf.scene) {
-            try {
-                const newMixer = new AnimationMixer(gltf.scene);
-                setMixer(newMixer);
-
-                gltf.animations.forEach((clip) => {
-                    const action = newMixer.clipAction(clip);
-                    if(play)
-                        action.play();
-                });
-            } catch (error) {
-                console.error('Error creating mixer or animation actions:', error);
-            }
+            const newMixer = new THREE.AnimationMixer(gltf.scene);
+            setMixer(newMixer);
+            gltf.animations.forEach((clip: THREE.AnimationClip) => {
+                const action = newMixer.clipAction(clip);
+                if (play) action.play();
+            });
         }
-    }, [gltf.scene,play]);
+    }, [gltf, play]);
 
-    useFrame((state, delta) => {
-        if (mixer) {
-            mixer.update(delta); // Update animation mixer in each frame
-        }
+    useFrame((_, delta) => {
+        mixer?.update(delta);
     });
+
     return (
-        <>
-            <Billboard
-                follow
-                position={[
-                    0.5,
-                    2.05,
-                    0.5
-                ]}
-            >
-
-            </Billboard>
-
-            <mesh ref={modelRef} layers={1} name="archMesh" visible={true} onClick={handleClick} >
+        <mesh ref={modelRef} layers={1} name="archMesh" visible={true} onClick={handleClick}>
             <primitive
-                ref={modelRef}
                 object={gltf.scene}
                 position={position}
                 rotation={rotation}
                 scale={scale}
             />
-
-            </mesh>
-        </>
-
-);
+        </mesh>
+    );
 };
-import React, {useEffect, useRef, useState} from 'react';
-
-
-import {AnimationMixer} from "three";
-import {Billboard} from "@react-three/drei";
 
 export default Model;

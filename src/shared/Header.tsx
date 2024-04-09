@@ -1,9 +1,12 @@
-import React from 'react';
+import {useContext} from 'react';
+import {ModelNameContext} from "../App";
 
 const Header = () => {
+    const {modelName} = useContext(ModelNameContext);
     return (
         <header>
-            <h3>Three.js assignement</h3>
+            <h2>Three.js assignement </h2>
+            <h2>selected model : {modelName} </h2>
         </header>
     );
 };

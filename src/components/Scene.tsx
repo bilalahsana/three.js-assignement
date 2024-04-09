@@ -1,9 +1,10 @@
 import { Canvas } from '@react-three/fiber';
-import React, {memo} from "react";
+import {memo, useContext} from "react";
 import Camera from "./Camera";
 import Model from "./Model";
 import {AccumulativeShadows, Cloud, OrbitControls, Outlines, RandomizedLight} from "@react-three/drei";
 import Floor from "./Floor";
+import {AnimationContext} from "../App";
 
 const Shadows = memo(() => (
     <AccumulativeShadows
@@ -19,6 +20,8 @@ const Shadows = memo(() => (
     </AccumulativeShadows>
 ));
 const Scene = () => {
+
+    const {play} = useContext(AnimationContext);
     return (
         <Canvas>
             <ambientLight intensity={0.5}/>
@@ -26,8 +29,8 @@ const Scene = () => {
             <color attach="background" args={["#7398cc"]}/>
             <Camera/>
             {/*<SmokeEffect />*/}
-            <Model url={"/woodlouse.glb"} position={[0,0,0]} scale={0.5} rotation={[0, 180, 0]} play={true}/>
-            <Model url={"/pseudoscorpion.glb"} position={[0,0,0]} scale={1} rotation={[0, 0, 0]} play={false}/>
+            <Model url={"/woodlouse.glb"} position={[20,0,0]} scale={[0.5,0.5,0.5]} rotation={[0, 180, 0]} play={play}/>
+            <Model url={"/pseudoscorpion.glb"} position={[-20,0,0]} scale={[1,1,1]} rotation={[0, 0, 0]} play={play}/>
             <Floor/>
             <Shadows/>
             <Cloud
@@ -35,7 +38,6 @@ const Scene = () => {
                 rotation={[0, 90, 0]}
 
                 scale={20}
-                width={100}
                 segments={100}
                 speed={1}
                 opacity={0.9}

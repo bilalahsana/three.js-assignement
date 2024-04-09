@@ -1,35 +1,33 @@
 import './App.css'
-import React, {useEffect} from "react";
+import  {createContext, useState} from "react";
 import Scene from "./components/Scene";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
-import axios from "axios";
 
+const typeAnyValue:any =()=>{};
+
+export const AnimationContext = createContext({play:false,setPlay:typeAnyValue});
+export const ModelNameContext = createContext({modelName:"",setModelName:typeAnyValue});
 
 function App() {
-    useEffect(() => {
-        fetch(`https://firebasestorage.googleapis.com/v0/b/threejs-be120.appspot.com/o/threejs-scene.json?alt=media&token=5681d972-4741-4a44-a069-4dcb74e41dd8`, {
 
-            headers: {
-                'Accept': '*/*' // Specify desired content type
-            },
-            mode: 'no-cors',
-            referrerPolicy: 'strict-origin-when-cross-origin'
-        })
-            .then(res => {
-                console.log(res)
-            }).catch(error=>{
-            console.log(error)
-        })
+    const [play, setPlay] = useState(true);
+    const [modelName, setModelName] = useState("");
 
-    }, []);
+
   return (
       <>
-          {/*<Header />*/}
+      <AnimationContext.Provider value={{ play, setPlay}}>
+          <ModelNameContext.Provider value={{modelName, setModelName }}>
+          <Header />
           <main>
-              <Scene />
+
+                  <Scene />
           </main>
-          {/*<Footer />*/}
+          </ModelNameContext.Provider>
+          <Footer />
+      </AnimationContext.Provider>
+
       </>
   )
 }
