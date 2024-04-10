@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { ModelNameContext } from "../App";
 
 type ModelProps = {
+    name:string;
     url: string;
     position: [number, number, number];
     rotation: [number, number, number];
@@ -12,7 +13,8 @@ type ModelProps = {
     play: boolean;
 };
 
-const Model = ({ url, position, rotation, scale, play }: ModelProps) => {
+
+const Model = ({ url, position, rotation, scale, play , name}: ModelProps) => {
 
     const { setModelName } = useContext(ModelNameContext);
     const gltf = useLoader(GLTFLoader, url);
@@ -25,8 +27,7 @@ const Model = ({ url, position, rotation, scale, play }: ModelProps) => {
     const handleClick = (event: THREE.Event) => {
         const intersectedObject = event.target as THREE.Object3D;
         clickedModelRef.current = intersectedObject;
-        console.log(url.split('.')[0].split('/')[1]);
-        setModelName(url.split('.')[0].split('/')[1]);
+        setModelName(name);
     };
 
     useEffect(() => {

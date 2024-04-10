@@ -1,26 +1,12 @@
 import { Canvas } from '@react-three/fiber';
-import {memo, useContext} from "react";
+import { useContext} from "react";
 import Camera from "./Camera";
 import Model from "./Model";
-import {AccumulativeShadows, Cloud, OrbitControls, Outlines, RandomizedLight} from "@react-three/drei";
+import { Cloud, OrbitControls, Outlines} from "@react-three/drei";
 import Floor from "./Floor";
 import {AnimationContext} from "../App";
 
-const Shadows = memo(() => (
-    <AccumulativeShadows
-        temporal
-        frames={100}
-        color="#d08049"
-        colorBlend={1}
-        alphaTest={0.9}
-        scale={3}
-        opacity={0.6}
-    >
-        <RandomizedLight amount={10} radius={1} position={[5, 5, 5]} />
-    </AccumulativeShadows>
-));
-const Scene = () => {
-
+const Scene = ({modelsArray}) => {
     const {play} = useContext(AnimationContext);
     return (
         <Canvas>
@@ -28,13 +14,21 @@ const Scene = () => {
             <pointLight position={[10, 10, 10]}/>
             <color attach="background" args={["#7398cc"]}/>
             <Camera/>
-            {/*<SmokeEffect />*/}
-            <Model url={"/woodlouse.glb"} position={[20,0,0]} scale={[0.5,0.5,0.5]} rotation={[0, 180, 0]} play={play}/>
-            <Model url={"/pseudoscorpion.glb"} position={[-20,0,0]} scale={[1,1,1]} rotation={[0, 0, 0]} play={play}/>
             <Floor/>
-            <Shadows/>
+            {modelsArray.map((model, i) => (
+                <Model
+                    key={i}
+                    name={model.name}
+                    url={model.url}
+                    position={[model.position.x, model.position.y, model.position.z]}
+                    scale={[model.scale.x, model.scale.y, model.scale.z]}
+                    rotation={[model.rotation.x, model.rotation.y, model.rotation.z]}
+                    play={play}
+                />
+            ))}
+
             <Cloud
-                position={[0,10,-100]}
+                position={[0,20,-100]}
                 rotation={[0, 90, 0]}
 
                 scale={20}
